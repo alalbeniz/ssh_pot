@@ -1,6 +1,7 @@
 import json
 import requests
-import sys
+
+from ddbb.connections import IP, Blacklist, Threat, IPThreat, IPBlacklist
 
 def get_ip_info_monapi(ip, proxy_conf=None):
     request_ip = requests.get("https://api.monapi.io/v1/ip/{}".format(ip))
