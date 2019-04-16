@@ -1,8 +1,6 @@
 import json
 import requests
 import sys
-print(sys.path)
-from src.ddbb.connections import IP, Blacklist, Threat, IPThreat, IPBlacklist
 
 def get_ip_info_monapi(ip, proxy_conf=None):
     request_ip = requests.get("https://api.monapi.io/v1/ip/{}".format(ip))
@@ -50,7 +48,6 @@ def insert_ip_info():
                 IPThreat.create(IP=ip, threat=ddbb_threat)
 
             #{'timezone': 'Australia/Sydney', 'asn_type': 'Content', 'longitude': 143.2104, 'city': None, 'asn_organization': 'Cloudflare, Inc.', 'threat_level': 'high', 'hostname': 'one.one.one.one', 'threat_class': ['organizations', 'malware', 'reputation'], 'iso_code': 'AU', 'country': 'Australia', 'blacklists': ['HPHOSTS_EMD', 'HPHOSTS_FSA', 'HPHOSTS_PSH', 'BITCOIN_NODES'], 'region': None, 'postal': None, 'latitude': -33.494, 'ip': '1.1.1.1', 'blacklists_list_count': 4, 'asn_number': 13335}
-            print('ESTA')
         else:
             ipinfo = get_ip_info_ipinfo(ip.address)
             if ipinfo:
@@ -65,6 +62,10 @@ def insert_ip_info():
                 ip.save()
                 #{'city': '', 'region': '', 'loc': '9.0000,-80.0000', 'ip': '141.98.81.100', 'country': 'PA', 'org': 'AS57043 HOSTKEY B.V.'}
 
+        print('{} info updated'.format(ip.address))
+    else:
+        print('No ip information updated')
 
-#if __name__== "__main__":
-insert_ip_info()
+
+if __name__== "__main__":
+    insert_ip_info()
