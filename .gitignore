@@ -1,0 +1,6 @@
+keys/*
+log*
+__pycache__/
+*.py[cod]
+*.db
+*.py.old
