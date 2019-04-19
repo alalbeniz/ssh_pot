@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 from ddbb import connections as sqlconn
-import base64
+from utils import commands
+
 from binascii import hexlify
 import os
 import socket
@@ -177,33 +178,41 @@ try:
 #        except Exception as e:
 #            print("*** Caught exception: " + str(e.__class__) + ": " + str(e))
 #            traceback.print_exc()
-        base_path = '/root'
-        list_files= ''
-        base_symb = '~'
+
+        command_parser = commands.Command()
+
+
+
+        # base_path = '/root'
+        # list_files= ''
+        # base_symb = '~'
 
         for i in range(10):
-            if command.startswith('id'):
-                chan.send("\r\nuid=0(root) gid=0(root) groups=0(root)\r\n")
-            elif command.startswith('ls'):
-                chan.send("\r\n{}\r\n".format(list_files))
-            elif command.startswith('pwd'):
-                chan.send("\r\n{}\r\n".format(base_path))
-            elif command.startswith('curl'):
-                chan.send("\r\n/connection timeout\r\n")
-            elif command.startswith('wget'):
-                chan.send("\r\n/connection timeout\r\n")
-            elif command.startswith('cd '):
-                base_symb = '/tmp'
-            elif command == '':
-                pass
-            else:
-                chan.send("\r\nbash: {}: command not found\r\n".format(command))
+            command_answer = command_parser.get_answer(command)
+            chan.send(command_answer)
+
+            # if command.startswith('id'):
+            #     chan.send("\r\nuid=0(root) gid=0(root) groups=0(root)\r\n")
+            # elif command.startswith('ls'):
+            #     chan.send("\r\n{}\r\n".format(list_files))
+            # elif command.startswith('pwd'):
+            #     chan.send("\r\n{}\r\n".format(base_path))
+            # elif command.startswith('curl'):
+            #     chan.send("\r\n/connection timeout\r\n")
+            # elif command.startswith('wget'):
+            #     chan.send("\r\n/connection timeout\r\n")
+            # elif command.startswith('cd '):
+            #     base_symb = '/tmp'
+            # elif command == '':
+            #     pass
+            # else:
+            #     chan.send("\r\nbash: {}: command not found\r\n".format(command))
 
             final_command = final_command + command + '\r\n'
             print('Command:[{}]'.format(command))
 
             try:
-                chan.send("{}@OpenWrt:{}#".format(t.get_username(), base_symb))
+                chan.send("{}@OpenWrt:{}#".format(t.get_username(), command_parser.base_symb))
                 f = chan.makefile("rU")
                 command = f.readline().strip("\r\n")
             except OSError as e:

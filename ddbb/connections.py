@@ -72,6 +72,23 @@ class IPThreat(Model):
 IPBlacklistThroughDeferred.set_model(IPBlacklist)
 IPThreatThroughDeferred.set_model(IPThreat)
 
+
+class Sample(Model):
+    id         = AutoField(primary_key=True)
+    name       = CharField(max_length=100)
+    md5sum     = CharField(max_length=100)
+    sha1sum    = CharField(max_length=100)
+    sha256sum  = CharField(max_length=100)
+    result     = CharField(max_length=1000)
+    timestamp  = DateTimeField(default=datetime.datetime.now)
+
+    class Meta:
+        database = db
+
+
+ConnectionSampleThroughDeferred = DeferredThroughModel()
+
+
 class Connection(Model):
     """Main class."""
     id          = AutoField(primary_key=True)
@@ -82,13 +99,27 @@ class Connection(Model):
     ip          = ForeignKeyField(IP, null=True)
     command     = CharField(max_length=1000, null=True)
     remote_version = CharField(max_length=100, null=True)
+    threat = ManyToManyField(Sample, through_model=ConnectionSampleThroughDeferred)
 
     class Meta:
         """Import db."""
         database = db
 
+
+class ConnectionSample(Model):
+    connection   = ForeignKeyField(Connection)
+    sample       = ForeignKeyField(Sample)
+
+    class Meta:
+        database = db
+        primary_key = CompositeKey("connection", "sample")
+
+
+ConnectionSampleThroughDeferred.set_model(ConnectionSample)
+
+
 db.connect()
-db.create_tables([Connection,IP, IPThreat, IPBlacklist, Threat, Blacklist], safe=True)
+db.create_tables([Connection,IP, IPThreat, IPBlacklist, Threat, Blacklist, Sample], safe=True)
 if dbg: print("DB created")
 db.commit()
 
@@ -99,7 +130,7 @@ def add_connection(username, password, address=None, command=None, remote_versio
         ip = IP.get_or_create(address=address)
 #        Connection.create(username=username, password=password, ip=ip).save()
 #    else:
-    Connection.create(username=username, password=password, ip=ip, command=command, remote_version=remote_version).save()
+    return Connection.create(username=username, password=password, ip=ip, command=command, remote_version=remote_version).save()
 
 @db.atomic()
 def get_connection(username):
@@ -128,4 +159,12 @@ def add_blacklist(description):
 @db.atomic()
 def get_blacklist(description):
     return Blacklist.get(Blacklist.description == description)
+
+@db.atomic()
+def add_sample(name):
+    return Sample.create(Sample.name == name)
+
+@db.atomic()
+def add_sample_connection(connection, sample):
+    ConnectionSample.create(connection=connection, sample=sample)
 

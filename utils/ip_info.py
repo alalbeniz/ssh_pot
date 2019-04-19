@@ -48,7 +48,11 @@ def insert_ip_info():
                 ddbb_threat     = Threat.get_or_create(description=threat)
                 IPThreat.create(IP=ip, threat=ddbb_threat)
 
-            #{'timezone': 'Australia/Sydney', 'asn_type': 'Content', 'longitude': 143.2104, 'city': None, 'asn_organization': 'Cloudflare, Inc.', 'threat_level': 'high', 'hostname': 'one.one.one.one', 'threat_class': ['organizations', 'malware', 'reputation'], 'iso_code': 'AU', 'country': 'Australia', 'blacklists': ['HPHOSTS_EMD', 'HPHOSTS_FSA', 'HPHOSTS_PSH', 'BITCOIN_NODES'], 'region': None, 'postal': None, 'latitude': -33.494, 'ip': '1.1.1.1', 'blacklists_list_count': 4, 'asn_number': 13335}
+            #{'timezone': 'Australia/Sydney', 'asn_type': 'Content', 'longitude': 143.2104, 'city': None,
+            # 'asn_organization': 'Cloudflare, Inc.', 'threat_level': 'high', 'hostname': 'one.one.one.one',
+            # 'threat_class': ['organizations', 'malware', 'reputation'], 'iso_code': 'AU', 'country': 'Australia',
+            # 'blacklists': ['HPHOSTS_EMD', 'HPHOSTS_FSA', 'HPHOSTS_PSH', 'BITCOIN_NODES'], 'region': None,
+            # 'postal': None, 'latitude': -33.494, 'ip': '1.1.1.1', 'blacklists_list_count': 4, 'asn_number': 13335}
         else:
             ipinfo = get_ip_info_ipinfo(ip.address)
             if ipinfo:
@@ -61,7 +65,8 @@ def insert_ip_info():
                 ip.asn_number       = ipinfo['']
                 ip.asn_organization = ipinfo['']
                 ip.save()
-                #{'city': '', 'region': '', 'loc': '9.0000,-80.0000', 'ip': '141.98.81.100', 'country': 'PA', 'org': 'AS57043 HOSTKEY B.V.'}
+                #{'city': '', 'region': '', 'loc': '9.0000,-80.0000', 'ip': '141.98.81.100', 'country': 'PA',
+                # 'org': 'AS57043 HOSTKEY B.V.'}
 
         print('{} info updated'.format(ip.address))
     else:
