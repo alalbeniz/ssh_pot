@@ -74,13 +74,18 @@ IPThreatThroughDeferred.set_model(IPThreat)
 
 
 class Sample(Model):
-    id         = AutoField(primary_key=True)
-    name       = CharField(max_length=100)
-    md5sum     = CharField(max_length=100)
-    sha1sum    = CharField(max_length=100)
-    sha256sum  = CharField(max_length=100)
-    result     = CharField(max_length=1000)
-    timestamp  = DateTimeField(default=datetime.datetime.now)
+    id          = AutoField(primary_key=True)
+    name        = CharField(max_length=100)
+    md5sum      = CharField(max_length=100, null=True)
+    sha1sum     = CharField(max_length=100, null=True)
+    sha256sum   = CharField(max_length=100, null=True)
+    raw_result  = TextField(null=True)
+    scan_result = IntegerField(null=True)
+    vt_link     = CharField(max_length=500, null=True)
+    positives   = IntegerField(null=True)
+    total       = IntegerField(null=True)
+    results     = CharField(max_length=1000, null=True)
+    timestamp   = DateTimeField(default=datetime.datetime.now)
 
     class Meta:
         database = db
@@ -90,16 +95,14 @@ ConnectionSampleThroughDeferred = DeferredThroughModel()
 
 
 class Connection(Model):
-    """Main class."""
     id          = AutoField(primary_key=True)
     username    = CharField(max_length=100)
-#    pass_type  =
     password    = CharField(max_length=100)
     timestamp   = DateTimeField(default=datetime.datetime.now)
     ip          = ForeignKeyField(IP, null=True)
     command     = CharField(max_length=1000, null=True)
-    remote_version = CharField(max_length=100, null=True)
-    threat = ManyToManyField(Sample, through_model=ConnectionSampleThroughDeferred)
+    remote_version  = CharField(max_length=100, null=True)
+    sample          = ManyToManyField(Sample, through_model=ConnectionSampleThroughDeferred)
 
     class Meta:
         """Import db."""
@@ -162,9 +165,9 @@ def get_blacklist(description):
 
 @db.atomic()
 def add_sample(name):
-    return Sample.create(Sample.name == name)
+    Sample.create(name=name).save()
 
 @db.atomic()
 def add_sample_connection(connection, sample):
-    ConnectionSample.create(connection=connection, sample=sample)
+    ConnectionSample.create(connection=connection, sample=sample).save()
 
