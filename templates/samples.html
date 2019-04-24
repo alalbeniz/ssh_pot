@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}SSH_POT Information{% endblock %}
+
+{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre las muestras{% endif %}{% endblock %}
+
+{% block content %}
+  <h3>Top muestras obtenidas</h3>
+  {% if data.top_samples %}
+    <table class="table table-condensed">
+      <tr>
+          <th>Nombre</th>
+          <th>sha256</th>
+          <th>Nº apariciones</th>
+      </tr>
+      {% for sample in data.top_samples %}
+        <tr>
+            <td>{{ sample.name }}</td>
+            <td><a href="{% if sample.sha256sum %}{{ url_for('sample_detail', sha256=sample.sha256sum)}}{% else %}{{ url_for('samples')}}{% endif %}">
+                {{ sample.sha256sum }}
+            </a></td>
+            <td>{{ sample.ct }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No ips connected yet.</p>
+  {% endif %}
+
+{% endblock %}

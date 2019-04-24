@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}SSH_POT Information{% endblock %}
+
+{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre las IPsindex.html{% endif %}{% endblock %}
+
+{% block content %}
+  <div class="col-md-6">
+  <h3>Top IPs atacantes</h3>
+  {% if data.ips %}
+    <table class="table table-condensed">
+      <tr>
+          <th>IP</th>
+          <th>Nº conexiones</th>
+      </tr>
+      {% for ip in data.ips %}
+        <tr>
+            <td><a href="{% if ip.address %}{{ url_for('ip_detail', address=ip.address)}}{% else %}{{ url_for('index')}}{% endif %}">
+          {{ ip.address }}
+            </a></td>
+            <td>{{ ip.ct }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No ips connected yet.</p>
+  {% endif %}
+  </div>
+
+  <div class="col-md-6">
+  <h3>Tops paises</h3>
+  {% if data.ips_countries %}
+    <table class="table table-condensed">
+      <tr>
+          <th>País</th>
+          <th>Nº conexiones</th>
+      </tr>
+      {% for ip in data.ips_top_countries %}
+      <tr>
+            <td><a href="{% if ip.country %}{{ url_for('index')}}{% else %}{{ url_for('index')}}{% endif %}">
+          {{ ip.country }}
+            </a></td>
+            <td>{{ ip.ct }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p>No ips connected yet.</p>
+  {% endif %}
+  </div>
+
+  <div id="container" class="col-md-12"></div>
+
+
+<script>
+    $(function () {
+        var data = [
+          {% for country in data.ips_countries %}
+            {'hc-key': '{{country.iso_code.lower()}}', 'value': {{ country.ct }}},
+          {% endfor %}
+        ];
+        // Initiate the chart
+        $('#container').highcharts('Map', {
+            chart: {
+                // Edit chart spacing
+                spacingBottom: 35,
+                spacingTop: 30,
+                spacingLeft: 30,
+                spacingRight: 30,
+
+                // Explicitly tell the width and height of a chart
+                width: null,
+                height: null
+            },
+	    navigation :{
+		buttonOptions:{
+		    enabled:false
+		},
+	    },
+            title: {
+                style:{
+                   color: '#FFF',
+                   fontSize: '20px',
+                   fontFamily: 'arial',
+                   fontWeight: 'bold'
+                },
+                text: 'Ataques DDoS por pais'
+            },
+            tooltip : {
+                enabled: true,
+                style: {
+                    fontWeight: 'bold',
+                    fontSize: "24px"
+                }
+            },
+            mapNavigation: {
+                enabled: false,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+           colorAxis: {
+                min: 0,
+                stops: [
+                    [0, '#EFEFFF'],
+                    [0.5, Highcharts.getOptions().colors[0]],
+                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+                ]
+            },
+	    credits: {
+		enabled:false
+	    },
+            series : [{
+                data : data,
+                mapData: Highcharts.maps['custom/world-highres2'],
+                joinBy: 'hc-key',
+                name: 'Número de conexiones',
+                states: {
+                    hover: {
+                        color: '#BADA55'
+                    }
+                },
+                dataLabels: {
+                    enabled: false,
+                }
+            }]
+        });
+    });
+</script>
+
+
+{% endblock %}
