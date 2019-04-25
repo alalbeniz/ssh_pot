@@ -2,7 +2,7 @@
 
 {% block title %}SSH_POT Information{% endblock %}
 
-{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre las IPsindex.html{% endif %}{% endblock %}
+{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre las IP{% endif %}{% endblock %}
 
 {% block content %}
   <div class="col-md-6">
@@ -63,10 +63,7 @@
         $('#container').highcharts('Map', {
             chart: {
                 // Edit chart spacing
-                spacingBottom: 35,
-                spacingTop: 30,
-                spacingLeft: 30,
-                spacingRight: 30,
+
 
                 // Explicitly tell the width and height of a chart
                 width: null,
