@@ -47,7 +47,7 @@ class Command:
                         file_name = 'noname'
     
                     try:
-                        conns.add_sample(file_name)
+                        conns.add_sample(file_name, request_uri)
                     except Exception as e:
                         logger.exception('*** Caught exception')
     
