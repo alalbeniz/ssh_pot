@@ -75,6 +75,7 @@ IPThreatThroughDeferred.set_model(IPThreat)
 
 class Sample(Model):
     id          = AutoField(primary_key=True)
+    url         = CharField(max_length=100, null=True)
     name        = CharField(max_length=100)
     md5sum      = CharField(max_length=100, null=True)
     sha1sum     = CharField(max_length=100, null=True)
@@ -164,8 +165,8 @@ def get_blacklist(description):
     return Blacklist.get(Blacklist.description == description)
 
 @db.atomic()
-def add_sample(name):
-    Sample.create(name=name).save()
+def add_sample(name, url=None):
+    Sample.create(name=name, url=url).save()
 
 @db.atomic()
 def add_sample_connection(connection, sample):

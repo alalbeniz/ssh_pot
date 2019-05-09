@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}SSH_POT Information{% endblock %}
+
+{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre la muestra {% endif %}{% endblock %}
+
+{% block content %}
+  {% if sample %}
+    <p>Nombre binario: {{ sample.name }}</p>
+    <p>Fecha de detección: {{ sample.timestamp }}</p>
+    <p>Hashes de la muestra</p>
+    <table class="table table-condensed">
+      <tr>
+          <th>md5</th><td>{{sample.md5sum}}</td>
+      </tr>
+      <tr>
+          <th>sha1</th><td>{{sample.sha1sum}}</td>
+      </tr>
+      <tr>
+          <th>sha256</th><td>{{sample.sha256sum}}</td>
+      </tr>
+    </table>
+
+    {% if sample.vt_link %}
+      <p><a href="{{ sample.vt_link }}" target="_blank">Link a virustotal</a></p>
+    {% endif %}
+
+    {% if sample.raw_result %}
+      <pre overflow-y: scroll;>{{ sample.raw_result|tojson_pretty|safe }}</pre>
+    {% endif %}
+
+  {% else %}
+    <p>No existe información detallada</p>
+  {% endif %}
+
+{% endblock %}

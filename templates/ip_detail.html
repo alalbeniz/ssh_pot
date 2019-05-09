@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}SSH_POT Information{% endblock %}
+
+{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre la IP {% endif %}{% endblock %}
+
+{% block content %}
+  {% if ip %}
+    <h3>{{ ip.address }}</h3>
+    {% if ip.asn_organization %}
+      <p>ASN Org: {{ ip.asn_organization }}</p>
+    {% endif %}
+    {% if ip.asn_number %}
+      <p>ASN Nº: {{ ip.asn_number }}</p>
+    {% endif %}
+    {% if ip.city %}
+      <p>Ciudad: {{ ip.city }}</p>
+    {% endif %}
+    {% if ip.region %}
+      <p>Región: {{ ip.region }}</p>
+    {% endif %}
+    {% if ip.latitude and ip.longitude %}
+      <p>Coordenadas: {{ ip.latitude }}, {{ ip.latitude }}</p>
+    {% endif %}
+    {% if ip.country and ip.iso_code %}
+      <p>País:{{ ip.country }} ({{ ip.iso_code }})</p>
+    {% endif %}
+    {% if ip.postal_code %}
+      <p>C.P.: {{ ip.postal_code }}</p>
+    {% endif %}
+    {% if ip.blacklist_count %}
+      <p>Nº blacklists: {{ ip.blacklist_count }}</p>
+    {% endif %}
+
+  {% else %}
+    <p>No existe información detallada</p>
+  {% endif %}
+
+{% endblock %}
