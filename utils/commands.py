@@ -78,14 +78,23 @@ class Command:
             elif cmd_received.startswith('cd '):
                 matches = self.cd_regex.findall(cmd_received)
                 if matches and len(matches) > 0:
-                    self.base_symb = matches[0]
+                    if matches[0].startswith('/'):
+                        self.base_symb = matches[0]
+                        self.base_path = matches[0]
+                    else:
+                        self.base_symb = self.base_symb + '/' + matches[0]
+                        self.base_path = self.base_path + '/' + matches[0]
                 return '\r\n'
     
             elif cmd_received == '':
                 return '\r\n'
     
             else:
-                return "\r\nbash: {}: command not found\r\n".format(cmd_received)
+                if ' ' in cmd_received:
+                    clean_cmd = cmd_received.split(' ')
+                    return "\r\nbash: {}: command not found\r\n".format(clean_cmd[0])
+                else:
+                    return "\r\nbash: {}: command not found\r\n".format(cmd_received)
         except Exception:
             logger.exception('*** Caught exception')
 
