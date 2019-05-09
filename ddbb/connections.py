@@ -75,7 +75,6 @@ IPThreatThroughDeferred.set_model(IPThreat)
 
 class Sample(Model):
     id          = AutoField(primary_key=True)
-    url         = CharField(max_length=100, null=True)
     name        = CharField(max_length=100)
     md5sum      = CharField(max_length=100, null=True)
     sha1sum     = CharField(max_length=100, null=True)

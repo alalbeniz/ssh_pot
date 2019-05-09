@@ -1,13 +1,10 @@
-import datetime
 import os
 import json
-import urllib
 
-from flask import (Flask, flash, Markup, redirect, render_template, request,
-                   Response, session, url_for)
+from flask import (Flask, render_template)
 from peewee import fn, SQL
 
-from playhouse.flask_utils import FlaskDB, get_object_or_404, object_list
+from playhouse.flask_utils import get_object_or_404
 
 from ddbb.connections import Connection, IP, Sample
 
@@ -23,7 +20,7 @@ SECRET_KEY = 'imdf8a9f88q46fq8fds98dfgb7hshfdsaj9'
 
 # This is used by micawber, which will attempt to generate rich media
 # embedded objects with maxwidth=800.
-SITE_WIDTH = 800
+SITE_WIDTH = 1200
 
 
 app = Flask(__name__)
@@ -83,11 +80,15 @@ def ips():
                    'samples': samples}
     return render_template('ips.html', data=data)
 
+
 @app.route('/ips/<address>/')
 def ip_detail(address):
-    query  = IP.select()
-    ip = get_object_or_404(query, IP.address == address)
-    return render_template('ip_detail.html', ip=ip)
+    try:
+        ip = IP.get(IP.address == address)
+        return render_template('ip_detail.html', ip=ip)
+    except:
+        return ips()
+
 
 @app.route('/samples')
 def samples():
@@ -98,9 +99,11 @@ def samples():
 
 @app.route('/samples/<sha256>/')
 def sample_detail(sha256):
-    query  = Sample.select()
-    sample = get_object_or_404(query, Sample.sha256sum == sha256)
-    return render_template('sample_detail.html', sample=sample)
+    try:
+        sample = Sample.get(Sample.sha256sum == sha256)
+        return render_template('sample_detail.html', sample=sample)
+    except:
+        return samples()
 
 
 @app.route('/')
