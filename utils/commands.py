@@ -73,8 +73,9 @@ class Command:
                     except Exception as e:
                         logger.exception('*** Caught exception')
     
-                return "\r\nconnection timeout\r\n"
-    
+#                return "\r\nconnection timeout\r\n"
+                return None
+
             elif cmd_received.startswith('cd '):
                 matches = self.cd_regex.findall(cmd_received)
                 if matches and len(matches) > 0:
@@ -97,5 +98,6 @@ class Command:
                     return "\r\nbash: {}: command not found\r\n".format(cmd_received)
         except Exception:
             logger.exception('*** Caught exception')
+            return None
 
 

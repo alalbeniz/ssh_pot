@@ -138,11 +138,20 @@ class VirusTotal(object):
                 if scan['detected'] == True:
                     results.append(scan['result'])
             
-            sample.raw_result  = data
+            sample.raw_result  = json.dumps(data)
             sample.save()
 
         except:
             logger.exception('Error extracting sample info')
+
+
+def get_samples_from_hash(vt, hashes):
+    logger.info('{} samples to search'.format(len(hashes)))
+    for sample in samples:
+        vt_response = vt.retrieve_from_checksum(sample.sha256sum)
+
+        if vt_response['response_code'] == 1:
+            vt.extract_info(vt_response, sample)
 
 
 def get_samples_info(vt, samples):
@@ -176,6 +185,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Virustotal Samples Scan')
     parser.add_argument("-n", "--new", help="scan unscanned files", action="store_true")
     parser.add_argument("-u", "--unknown", help="scan files without information", action="store_true")
+    parser.add_argument("-s", "--sum", help="scan files from sum", action="store_true")
     args = parser.parse_args()
 
 
@@ -194,6 +204,13 @@ if __name__ == "__main__":
         else:
             logger.info('No samples to search')
 
+
+    if args.sum:
+        samples = Sample.select().where((Sample.scan_result == None) & (Sample.sha256sum != None))
+        if samples:
+            get_samples_from_hash(vt, samples)
+        else:
+            logger.info('No samples to search')
 
 #    logger.info('{} samples to search'.format(len(samples)))
 #    for sample in samples:

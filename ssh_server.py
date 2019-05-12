@@ -193,12 +193,13 @@ try:
                 break
 
             command_answer = command_parser.get_answer(command)
+            final_command = final_command + command + '\r\n'
+            logger.debug('Command:[{}]'.format(command))
+
             if not command_answer:
                 break
             chan.send(command_answer)
 
-            final_command = final_command + command + '\r\n'
-            logger.debug('Command:[{}]'.format(command))
 
 #        sqlconn.add_connection(t.get_username(), t.server_object.get_pass(), ip_address)#, t.server_object.)
     except Exception as e:
