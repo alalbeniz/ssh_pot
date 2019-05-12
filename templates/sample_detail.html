@@ -6,9 +6,9 @@
 
 {% block content %}
   {% if sample %}
-    <p>Nombre binario: {{ sample.name }}</p>
-    <p>Fecha de detección: {{ sample.timestamp }}</p>
-    <p>Hashes de la muestra</p>
+  <p><strong>Nombre binario:</strong> {{ sample.name }}</p>
+    <p><strong>Fecha de detección:</strong> {{ sample.timestamp }}</p>
+    <p><strong>Hashes de la muestra</strong></p>
     <table class="table table-condensed">
       <tr>
           <th>md5</th><td>{{sample.md5sum}}</td>
@@ -22,15 +22,28 @@
     </table>
 
     {% if sample.vt_link %}
+      <h3>Virustotal</h3>
       <p><a href="{{ sample.vt_link }}" target="_blank">Link a virustotal</a></p>
     {% endif %}
 
+    <div id="gauge" style="height:142px;"></div>
+
     {% if sample.raw_result %}
-      <pre overflow-y: scroll;>{{ sample.raw_result|tojson_pretty|safe }}</pre>
+      <pre name="" id="myTextarea" ></pre>
     {% endif %}
 
   {% else %}
     <p>No existe información detallada</p>
   {% endif %}
+
+<script>
+    var myData ={{sample.raw_result|safe}};
+    var textedJson = JSON.stringify(myData, undefined, 4);
+    $('#myTextarea').text(textedJson);
+</script>
+
+
+
+
 
 {% endblock %}

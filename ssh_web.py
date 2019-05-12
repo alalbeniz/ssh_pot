@@ -2,7 +2,7 @@ import os
 import json
 
 from flask import (Flask, render_template)
-from peewee import fn, SQL
+from peewee import fn, SQL, JOIN
 
 from playhouse.flask_utils import get_object_or_404
 
@@ -38,6 +38,13 @@ def to_pretty_json(value):
 app.jinja_env.filters['tojson_pretty'] = to_pretty_json
 
 
+def clean_sample_url(value):
+    return value.replace('http', 'hxxp')
+
+
+app.jinja_env.filters['clean_sample_url'] = clean_sample_url
+
+
 def get_top_ip_attackers():
     ips = (IP
            .select(IP.address, fn.COUNT(IP.address).alias('ct'))
@@ -56,28 +63,57 @@ def get_countries():
 #                     .limit(10))
     return ips_countries
 
+
 def get_samples():
-    samples = (Sample
+    top_samples = (Sample
                .select(Sample.name, Sample.sha256sum, fn.COUNT(Sample.name).alias('ct'))
                .where(Sample.scan_result != None)
                .group_by(Sample.name)
                .order_by(SQL('ct').desc())
                .limit(10))
-    return samples
+    return top_samples
+
+
+def get_latest_conn_commands():
+    commands = (Connection
+                .select(Connection.username, Connection.password, Connection.command)
+                .where(Connection.command != '')
+                .order_by(Connection.id.desc())
+                .limit(5))
+    return commands
+
+
+def get_latest_conn_countries():
+    countries = (IP
+                 .select(IP.address, IP.iso_code, IP.country, IP.asn_number, IP.asn_organization, IP.blacklist_count, IP.threat_level)
+                 .join(Connection, JOIN.LEFT_OUTER)
+                 .order_by(Connection.id.desc())
+                 .limit(10)
+    )
+    return countries
+
+
+def get_latest_conn_samples():
+    latest_samples = (Sample
+               .select(Sample.name, Sample.url, Sample.sha256sum)
+               .order_by(Sample.id.desc())
+               .limit(10))
+    return latest_samples
+
+
+@app.route('/connections')
+def connections():
+    return render_template('connections.html')
 
 
 @app.route('/ips')
 def ips():
-    ips = get_top_ip_attackers()
+    ips_top = get_top_ip_attackers()
     ips_countries = get_countries()
     ips_top_countries = ips_countries.limit(10)
-    connections = Connection.select()
-    samples     = Sample.select()
-    data        = {'ips': ips,
+    data        = {'ips': ips_top,
                    'ips_countries': ips_countries,
-                   'ips_top_countries': ips_top_countries,
-                   'conns': connections,
-                   'samples': samples}
+                   'ips_top_countries': ips_top_countries}
     return render_template('ips.html', data=data)
 
 
@@ -108,7 +144,20 @@ def sample_detail(sha256):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+#    ips                 = get_top_ip_attackers()
+#    ips_countries       = get_countries()
+#    ips_top_countries   = ips_countries.limit(10)
+
+    latest_commands     = get_latest_conn_commands()
+    latest_countries    = get_latest_conn_countries()
+    latest_samples      = get_latest_conn_samples()
+    data                = {
+            #'ips' : ips,
+            'latest_countries': latest_countries,
+            'latest_commands': latest_commands,
+            'latest_samples': latest_samples,
+    }
+    return render_template('index.html', data=data)
 
 
 def main():
