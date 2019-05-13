@@ -20,7 +20,7 @@ class Command:
         self.base_symb  = base_symb
 
         self.cd_regex   = re.compile('cd\s([^\s]+)')
-        self.curl_wget_regex = re.compile('(?:curl|wget)\s([^\s]*)')
+        self.curl_wget_regex = re.compile('(?:curl|wget)\s(?:-[^\s].*)\s+([^\s]*)')
         self.file_name_regex = re.compile('(?:curl|wget)\s(.*[/](.*))')
 
     def get_answer(self, cmd_received):
