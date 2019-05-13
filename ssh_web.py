@@ -30,7 +30,7 @@ app.config.from_object(__name__)
 # flask_db = FlaskDB(app)
 # database = flask_db.database
 
-
+##TEMPLATE FILTERS
 def to_pretty_json(value):
     return json.dumps(value, sort_keys=True,
                       indent=4, separators=(',', ': '))
@@ -44,8 +44,9 @@ def clean_sample_url(value):
 
 
 app.jinja_env.filters['clean_sample_url'] = clean_sample_url
+### END TEMPLATE FILTERS
 
-
+##TOPS
 def get_top_ip_attackers():
     # ips = (IP
     #        .select(IP.address, fn.COUNT(IP.address).alias('ct'))
@@ -80,6 +81,33 @@ def get_samples():
     return top_samples
 
 
+def get_top_usernames():
+    top_usernames = (Connection
+                     .select(Connection.username, fn.COUNT(Connection.username).alias('ct'))
+                     .group_by(Connection.username)
+                     .order_by(SQL('ct').desc())
+                     .limit(10))
+    return top_usernames
+
+
+def get_top_passwords():
+    top_passwords = (Connection
+                     .select(Connection.password, fn.COUNT(Connection.password).alias('ct'))
+                     .group_by(Connection.password)
+                     .order_by(SQL('ct').desc())
+                     .limit(10))
+    return top_passwords
+
+
+def get_top_clients():
+    top_clients = (Connection
+                     .select(Connection.remote_version, fn.COUNT(Connection.remote_version).alias('ct'))
+                     .group_by(Connection.remote_version)
+                     .order_by(SQL('ct').desc())
+                     .limit(10))
+    return top_clients
+
+
 def get_latest_conn_commands():
     commands = (Connection
                 .select(Connection.username, Connection.password, Connection.command)
@@ -109,7 +137,22 @@ def get_latest_conn_samples():
 
 @app.route('/connections')
 def connections():
-    return render_template('connections.html')
+    password_count = Connection.select(Connection.password).distinct().count()
+    username_count = Connection.select(Connection.username).distinct().count()
+    client_count = Connection.select(Connection.remote_version).distinct().count()
+    top_usernames = get_top_usernames()
+    top_passwords = get_top_passwords()
+    top_clients   = get_top_clients()
+
+    data = {
+        'password_count': password_count,
+        'username_count': username_count,
+        'client_count': client_count,
+        'top_usernames': top_usernames,
+        'top_passwords': top_passwords,
+        'top_clients': top_clients,
+    }
+    return render_template('connections.html', data=data)
 
 
 @app.route('/ips')

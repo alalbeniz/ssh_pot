@@ -2,8 +2,68 @@
 
 {% block title %}SSH_POT Information{% endblock %}
 
-{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre las muestras{% endif %}{% endblock %}
+{% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre las conexiones{% endif %}{% endblock %}
 
 {% block content %}
+
+  <div class="col-md-4">
+      <p>Usuarios únicos usados</p>
+      <h2>{{data.username_count}}</h2>
+  </div>
+  <div class="col-md-4">
+      <p>Passwords únicos usados</p>
+      <h2>{{data.password_count}}</h2>
+  </div>
+  <div class="col-md-4">
+      <p>Clientes únicos detectados</p>
+      <h2>{{data.client_count}}</h2>
+  </div>
+<br>
+<div class="col-md-12"><h3>Top información conexiones</h3></div>
+
+    <div class="col-md-4">
+        <table class="table table-condensed table-striped">
+          <tr>
+          <th>Username</th>
+          <th>#</th>
+      </tr>
+      {% for username in data.top_usernames %}
+        <tr>
+            <td>{{ username.username }}</td>
+            <td>{{ username.ct }}</td>
+        </tr>
+      {% endfor %}
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <table class="table table-condensed table-striped">
+          <tr>
+          <th>Password</th>
+          <th>#</th>
+      </tr>
+      {% for password in data.top_passwords %}
+        <tr>
+            <td>{{ password.password }}</td>
+            <td>{{ password.ct }}</td>
+        </tr>
+      {% endfor %}
+        </table>
+    </div>
+
+    <div class="col-md-4">
+        <table class="table table-condensed table-striped">
+          <tr>
+          <th>Clientes</th>
+          <th>#</th>
+      </tr>
+      {% for client in data.top_clients %}
+        <tr>
+            <td>{{ client.remote_version }}</td>
+            <td>{{ client.ct }}</td>
+        </tr>
+      {% endfor %}
+        </table>
+    </div>
 
 {% endblock %}
