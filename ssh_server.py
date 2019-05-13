@@ -153,6 +153,7 @@ try:
     logger.debug('Username:[{}], Method:[{}], Pass:[]'.format(t.get_username(), t.server_object.get_method()))
 
     if chan is None:
+        sqlconn.add_connection(t.get_username(), t.server_object.get_pass(), ip_address, None, t.remote_version)
         logger.debug('*** No channel.')
         sys.exit(1)
 
@@ -160,6 +161,7 @@ try:
 
     server.event.wait(10)
     if not server.event.is_set():
+        sqlconn.add_connection(t.get_username(), t.server_object.get_pass(), ip_address, None, t.remote_version)
         logger.debug('*** Client never asked for a shell.')
         sys.exit(1)
 

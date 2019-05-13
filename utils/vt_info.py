@@ -157,8 +157,13 @@ def get_samples_from_hash(vt, hashes):
 def get_samples_info(vt, samples):
     logger.info('{} samples to search'.format(len(samples)))
     for sample in samples:
-        sample_path = APP_DIR + '/../samples/' + sample.name
-        sample_hash = hashing(sample_path, SHA256)
+        sample_path = os.path.join(APP_DIR, "..", "samples", sample.name)
+        #sample_path = APP_DIR + '/../samples/' + sample.name
+        try:
+            logger.info('Searching {} sample'.format(sample_path))
+            sample_hash = hashing(sample_path, SHA256)
+        except:
+            continue
 
         try:
             sample.sha256sum = sample_hash
@@ -168,7 +173,7 @@ def get_samples_info(vt, samples):
 
         vt_response = vt.retrieve_from_checksum(sample_hash)
 
-        if vt_response['response_code'] == 1:
+        if vt_response and vt_response['response_code'] == 1:
             vt.extract_info(vt_response, sample)
 
 
@@ -190,6 +195,7 @@ if __name__ == "__main__":
 
 
     if args.new:
+        logger.info('Searching new samples')
         samples = Sample.select().where(Sample.scan_result == None)
         if samples:
             get_samples_info(vt, samples)
@@ -198,6 +204,7 @@ if __name__ == "__main__":
 
 
     if args.unknown:
+        logger.info('Searching unknown samples')
         samples = Sample.select().where(Sample.scan_result == 0)
         if samples:
             get_samples_info(vt, samples)
