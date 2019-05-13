@@ -47,12 +47,17 @@ app.jinja_env.filters['clean_sample_url'] = clean_sample_url
 
 
 def get_top_ip_attackers():
-    ips = (IP
-           .select(IP.address, fn.COUNT(IP.address).alias('ct'))
-           .group_by(IP.address)
+    # ips = (IP
+    #        .select(IP.address, fn.COUNT(IP.address).alias('ct'))
+    #        .group_by(IP.address)
+    #        .order_by(SQL('ct').desc())
+    #        .limit(10))
+    ips_ct = (Connection
+           .select(Connection.ip_id, fn.COUNT(Connection.ip_id).alias('ct'))
+           .group_by(Connection.ip_id)
            .order_by(SQL('ct').desc())
            .limit(10))
-    return ips
+    return ips_ct
 
 
 def get_countries():
@@ -148,12 +153,18 @@ def index():
 #    ips                 = get_top_ip_attackers()
 #    ips_countries       = get_countries()
 #    ips_top_countries   = ips_countries.limit(10)
-
+    ip_count            = IP.select().count()
+    sample_count        = Sample.select().count()
+    up_count            = (Connection
+                            .select(Connection.username, Connection.password)
+                            .group_by(Connection.username, Connection.password).count())
     latest_commands     = get_latest_conn_commands()
     latest_countries    = get_latest_conn_countries()
     latest_samples      = get_latest_conn_samples()
     data                = {
-            #'ips' : ips,
+            'ip_count' : ip_count,
+            'sample_count': sample_count,
+            'up_count': up_count,
             'latest_countries': latest_countries,
             'latest_commands': latest_commands,
             'latest_samples': latest_samples,

@@ -5,6 +5,22 @@
 {% block content_title %}{% if search %}Search "{{ search }}"{% else %}Inicio{% endif %}{% endblock %}
 
 {% block content %}
+<div class="col-md-12"><h3>Estadísticas de conectividad</h3></div>
+  <div class="col-md-4">
+      <p>IPs únicas conectadas</p>
+      <h2>{{data.ip_count}}</h2>
+  </div>
+  <div class="col-md-4">
+      <p>Muestras únicas detectadas</p>
+      <h2>{{data.sample_count}}</h2>
+  </div>
+  <div class="col-md-4">
+      <p>Usr/Pwd únicos detectados</p>
+      <h2>{{data.up_count}}</h2>
+  </div>
+
+    <hr>
+
   <div class="col-md-12">
   <h3>Últimos comandos de conexiones</h3>
   {% if data.latest_commands %}
