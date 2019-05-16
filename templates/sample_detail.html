@@ -8,7 +8,12 @@
   {% if sample %}
   <p><strong>Nombre binario:</strong> {{ sample.name }}</p>
     <p><strong>Fecha de detección:</strong> {{ sample.timestamp }}</p>
+    {% if sample.positives and sample.total %}
+      <p><strong>Detecciones: </strong>{{ sample.positives}}/{{sample.total}}</p>
+    {% endif %}
+
     <p><strong>Hashes de la muestra</strong></p>
+
     <table class="table table-condensed">
       <tr>
           <th>md5</th><td>{{sample.md5sum}}</td>
@@ -25,8 +30,6 @@
       <h3>Virustotal</h3>
       <p><a href="{{ sample.vt_link }}" target="_blank">Link a virustotal</a></p>
     {% endif %}
-
-    <div id="gauge" style="height:142px;"></div>
 
     {% if sample.raw_result %}
       <pre name="" id="myTextarea" ></pre>

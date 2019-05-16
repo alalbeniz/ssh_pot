@@ -31,6 +31,9 @@
     {% if ip.blacklist_count %}
       <p>Nº blacklists: {{ ip.blacklist_count }}</p>
     {% endif %}
+    {% if ip.threat_level %}
+      <p>Nivel de riesgo: {{ ip.threat_level }}</p>
+    {% endif %}
 
   {% else %}
     <p>No existe información detallada</p>
