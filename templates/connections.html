@@ -22,45 +22,45 @@
 <div class="col-md-12"><h3>Top información conexiones</h3></div>
 
     <div class="col-md-4">
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed table-striped" style="table-layout:fixed;">
           <tr>
-          <th>Username</th>
-          <th>#</th>
+          <th style="width: 85%;">Username</th>
+          <th align="right">#</th>
       </tr>
       {% for username in data.top_usernames %}
         <tr>
             <td>{{ username.username }}</td>
-            <td>{{ username.ct }}</td>
+            <td align="right">{{ username.ct }}</td>
         </tr>
       {% endfor %}
         </table>
     </div>
 
     <div class="col-md-4">
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed table-striped" style="table-layout:fixed;">
           <tr>
-          <th>Password</th>
-          <th>#</th>
+          <th style="width: 85%;">Password</th>
+          <th align="right">#</th>
       </tr>
       {% for password in data.top_passwords %}
         <tr>
-            <td>{{ password.password }}</td>
-            <td>{{ password.ct }}</td>
+            <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ password.password }}</td>
+            <td align="right">{{ password.ct }}</td>
         </tr>
       {% endfor %}
         </table>
     </div>
 
     <div class="col-md-4">
-        <table class="table table-condensed table-striped">
+        <table class="table table-condensed table-striped" style="table-layout:fixed;">
           <tr>
-          <th>Clientes</th>
-          <th>#</th>
+          <th style="width: 85%;">Clientes</th>
+          <th align="right">#</th>
       </tr>
       {% for client in data.top_clients %}
         <tr>
-            <td>{{ client.remote_version }}</td>
-            <td>{{ client.ct }}</td>
+            <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ client.remote_version }}</td>
+            <td align="right">{{ client.ct }}</td>
         </tr>
       {% endfor %}
         </table>
