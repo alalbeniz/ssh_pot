@@ -186,7 +186,17 @@ def samples():
 def sample_detail(sha256):
     try:
         sample = Sample.get(Sample.sha256sum == sha256)
-        return render_template('sample_detail.html', sample=sample)
+        vt_info = json.loads(sample.raw_result)
+        results = {}
+        for scan, data in vt_info['scans'].items():
+            if data['result']:
+                if data['result'] in results:
+                    results[data['result']] = results[data['result']] + 1
+                else:
+                    results[data['result']] = 1
+        data = {'sample': sample, 'results': results}
+
+        return render_template('sample_detail.html', data=data)
     except:
         return samples()
 

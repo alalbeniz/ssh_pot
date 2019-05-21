@@ -5,33 +5,51 @@
 {% block content_title %}{% if search %}Search "{{ search }}"{% else %}Información sobre la muestra {% endif %}{% endblock %}
 
 {% block content %}
-  {% if sample %}
-  <p><strong>Nombre binario:</strong> {{ sample.name }}</p>
-    <p><strong>Fecha de detección:</strong> {{ sample.timestamp }}</p>
-    {% if sample.positives and sample.total %}
-      <p><strong>Detecciones: </strong>{{ sample.positives}}/{{sample.total}}</p>
+  {% if data.sample %}
+  <p><strong>Nombre binario:</strong> {{ data.sample.name }}</p>
+    <p><strong>Fecha de detección:</strong> {{ data.sample.timestamp }}</p>
+    {% if data.sample.positives and data.sample.total %}
+      <p><strong>Detecciones: </strong>{{ data.sample.positives}}/{{data.sample.total}}</p>
     {% endif %}
 
     <p><strong>Hashes de la muestra</strong></p>
 
     <table class="table table-condensed">
       <tr>
-          <th>md5</th><td>{{sample.md5sum}}</td>
+          <th>md5</th><td>{{data.sample.md5sum}}</td>
       </tr>
       <tr>
-          <th>sha1</th><td>{{sample.sha1sum}}</td>
+          <th>sha1</th><td>{{data.sample.sha1sum}}</td>
       </tr>
       <tr>
-          <th>sha256</th><td>{{sample.sha256sum}}</td>
+          <th>sha256</th><td>{{data.sample.sha256sum}}</td>
       </tr>
     </table>
 
-    {% if sample.vt_link %}
+    {% if data.sample.vt_link %}
       <h3>Virustotal</h3>
-      <p><a href="{{ sample.vt_link }}" target="_blank">Link a virustotal</a></p>
+      <p><a href="{{ data.sample.vt_link }}" target="_blank">Link a virustotal</a></p>
     {% endif %}
 
-    {% if sample.raw_result %}
+    {% if data.results %}
+      <p><strong>Coincidencias de la muestra:</strong></p>
+      <table class="table table-condensed table-striped">
+      <tr>
+        <th>Result</th>
+        <th>Coincidencias</th>
+      </tr>
+      {% for result, count in data.results.items() %}
+        <tr>
+            <td>{{ result }}</td>
+            <td>{{ count }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+      <p>{{result}}</p>
+
+    {% endif %}
+
+    {% if data.sample.raw_result %}
       <pre name="" id="myTextarea" ></pre>
     {% endif %}
 
@@ -40,7 +58,7 @@
   {% endif %}
 
 <script>
-    var myData ={{sample.raw_result|safe}};
+    var myData ={{data.sample.raw_result|safe}};
     var textedJson = JSON.stringify(myData, undefined, 4);
     $('#myTextarea').text(textedJson);
 </script>
